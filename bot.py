@@ -55,7 +55,7 @@ async def tag(bot, m):
 
     #mes1 = await bot.send_message(m.from_user.id , f"**Current FileName is:** \n `{filename}` [{fsize}]")
 
-    fname = await bot.ask(m.chat.id,f"Enter New Filename: or /skip \n\n Current Name:\n`{filename}  [{fsize}]`", filters=filters.text)
+    fname = await bot.ask(m.chat.id,f"Enter New Filename: or /skip \n\n Current Name:\n`{filename}` [{fsize}]", filters=filters.text)
     title = await bot.ask(m.chat.id,f"Enter New Title: or /skip", filters=filters.text)
     artist = await bot.ask(m.chat.id,f"Enter New Artist(s): or /skip", filters=filters.text)
     
@@ -89,7 +89,7 @@ async def tag(bot, m):
         artist.text = "حسن اللهیاری"    
     
     #mes3 = await bot.send_message(m.from_user.id , "**Your Edited Audio is Uploading ... Please wait ...**")
-    await mes2.edit("Uploading File ...")
+    await mes2.edit("Uploading Audio ...")
     
     c_time = time.time()    
     try:
@@ -97,7 +97,7 @@ async def tag(bot, m):
             chat_id=m.chat.id,
             progress=progress_for_pyrogram,
             progress_args=(
-                "Uploading File ...",
+                "Uploading Audio ...",
                 mes2,
                 c_time
             ),
@@ -112,6 +112,9 @@ async def tag(bot, m):
     except Exception as e:
         print(e)
 
+    await fname.delete()
+    await title.delete()
+    await artist.delete()
     await mes2.delete()
     #await bot.send_message(m.from_user.id , f"**New FileName : <code>{fname.text}</code> \n\n New Title = <code>{title.text}</code>\n\n New Artist = <code>{artist.text}</code>**")
     await bot.send_message(m.from_user.id , f"Done! Start New Job!")
