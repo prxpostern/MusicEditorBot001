@@ -66,14 +66,14 @@ async def tag(bot, m):
     
     c_time = time.time()
     mes2 = await m.reply_text(
-            text=f"**Downloading...**",
+            text=f"**Initiating Download...**",
             quote=True
     )
     file_loc = await bot.download_media(
         m,
         progress=progress_for_pyrogram,
         progress_args=(
-            "Downloading File ...",
+            f"Downloading Audio [{fsize}] ...",
             mes2,
             c_time
         )
@@ -94,7 +94,7 @@ async def tag(bot, m):
         artist.text = "حسن اللهیاری"    
     
     #mes3 = await bot.send_message(m.from_user.id , "**Your Edited Audio is Uploading ... Please wait ...**")
-    await mes2.edit("Uploading Audio ...")
+    await mes2.edit("Initiating Upload ...")
     
     c_time = time.time()    
     try:
@@ -102,7 +102,7 @@ async def tag(bot, m):
             chat_id=m.chat.id,
             progress=progress_for_pyrogram,
             progress_args=(
-                "Uploading Audio ...",
+                f"Uploading Audio [{fsize}]",
                 mes2,
                 c_time
             ),
