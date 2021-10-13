@@ -50,6 +50,11 @@ async def start(bot, update):
 async def tag(bot, m):
 
     filetype = m.audio or m.document
+    
+    if not filetype.mime_type.startswith("audio/"):
+        await m.reply_text(text=f"Wrong File Type !")
+        return
+    
     filename = filetype.file_name
     fsize = get_size(filetype.file_size)
 
