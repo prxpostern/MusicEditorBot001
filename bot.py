@@ -85,9 +85,15 @@ async def tag(bot, m):
     if fname.text == "/skip":
         fname.text = filename
     if title.text == "/skip":
-        title.text = " "
+        if filetype.title:
+            title.text = filetype.title
+        else:
+            title.text = " "
     if artist.text == "/skip":
-        artist.text = " "
+        if filetype.performer:
+            artist.text = filetype.performer
+        else:
+            artist.text = " "
     if artist.text == ".":
         artist.text = "حسن اللهیاری"    
     
