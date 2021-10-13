@@ -29,7 +29,7 @@ I can change the music tags.
 Send a music to get started.
 
 If You Dont want to Change any Item,
-just send a dot "/skip" when bot asked for it.
+just send "/skip" when bot asked for it.
 """
 
 def get_size(size):
