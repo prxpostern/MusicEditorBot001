@@ -111,7 +111,7 @@ async def tag(bot, m):
             title=title.text,
             duration=duration,
             audio=file_loc,
-            caption=f"**Filename:** `{fname.text}`\n**Title:** `{title.text}`\n**Artist(s):** `{artist.text}`\n**Size:** `{fsize}`",
+            caption=f"**Filename:** `{fname.text}`\n**Title:** `{title.text}`\n**Artist(s):** `{artist.text}`\n**Size:** {fsize}",
             reply_to_message_id=m.message_id
          )
     except Exception as e:
