@@ -58,12 +58,12 @@ async def tag(bot, m):
     filename = filetype.file_name
     fsize = get_size(filetype.file_size)
 
-    #mes1 = await bot.send_message(m.from_user.id , f"**Current FileName is:** \n `{filename}` [{fsize}]")
-
-    fname = await bot.ask(m.chat.id,f"Enter New Filename: or /skip \n\n Current Name:\n`{filename}` [{fsize}]", filters=filters.text)
-    title = await bot.ask(m.chat.id,f"Enter New Title: or /skip", filters=filters.text)
-    artist = await bot.ask(m.chat.id,f"Enter New Artist(s): or /skip", filters=filters.text)
-    
+    fname1 = bot.ask(m.chat.id,f"Enter New Filename: or /skip \n\n Current Name:\n`{filename}` [{fsize}]", filters=filters.text)
+    fname = await fname1
+    title1 = await bot.ask(m.chat.id,f"Enter New Title: or /skip", filters=filters.text)
+    title = await title1
+    artist1 = await bot.ask(m.chat.id,f"Enter New Artist(s): or /skip", filters=filters.text)
+    artist = await artist1
     c_time = time.time()
     mes2 = await m.reply_text(
             text=f"**Initiating Download...**",
@@ -93,7 +93,6 @@ async def tag(bot, m):
     if artist.text == ".":
         artist.text = "حسن اللهیاری"    
     
-    #mes3 = await bot.send_message(m.from_user.id , "**Your Edited Audio is Uploading ... Please wait ...**")
     await mes2.edit("Initiating Upload ...")
     
     c_time = time.time()    
@@ -119,11 +118,13 @@ async def tag(bot, m):
         print(e)
 
     os.remove(file_loc)
+    await fname1.delete()
+    await title1.delete()
+    await artist1.delete()
     await fname.delete()
     await title.delete()
     await artist.delete()
     await mes2.delete()
-    #await bot.send_message(m.from_user.id , f"**New FileName : <code>{fname.text}</code> \n\n New Title = <code>{title.text}</code>\n\n New Artist = <code>{artist.text}</code>**")
     await bot.send_message(m.from_user.id , f"Done! Start New Job!")
         
 Bot.run()
