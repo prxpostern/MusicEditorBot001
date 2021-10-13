@@ -115,8 +115,10 @@ async def tag(bot, m):
             reply_to_message_id=m.message_id
          )
     except Exception as e:
+        await mes2.edit(f"Upload as Audio Failed\nError:\n{e}")
         print(e)
 
+    os.remove(file_loc)
     await fname.delete()
     await title.delete()
     await artist.delete()
