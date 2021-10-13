@@ -58,7 +58,7 @@ async def tag(bot, m):
     filename = filetype.file_name
     fsize = get_size(filetype.file_size)
 
-    fname = bot.ask(m.chat.id,f"Enter New Filename: or /skip \n\n Current Name:\n`{filename}` [{fsize}]", filters=filters.text)
+    fname = await bot.ask(m.chat.id,f"Enter New Filename: or /skip \n\n Current Name:\n`{filename}` [{fsize}]", filters=filters.text)
     title = await bot.ask(m.chat.id,f"Enter New Title: or /skip", filters=filters.text)
     artist = await bot.ask(m.chat.id,f"Enter New Artist(s): or /skip", filters=filters.text)
     
