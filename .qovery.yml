@@ -1,0 +1,11 @@
+---
+application:
+  name: "musiceditorbot001"
+  project: "musiceditor"
+  organization: "QoveryCommunity"
+routers:
+- name: "main-musiceditor"
+  routes:
+  - application_name: "musiceditorbot001"
+    paths:
+    - "/*"
