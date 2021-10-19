@@ -11,6 +11,8 @@ import time
 from hachoir.parser import createParser
 from hachoir.metadata import extractMetadata
 from display_progress import progress_for_pyrogram, humanbytes
+import asyncio
+import mimetypes
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 API_ID = os.environ.get("API_ID")
