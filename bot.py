@@ -55,29 +55,29 @@ async def tag(bot, m):
     
     if not filetype.mime_type.startswith("audio/"):
         if not filetype.file_name:
-            await m.reply_text(text=f"Wrong File Type !")
+            await m.reply_text(text=f"Wrong File Type !\n{filetype.mime_type}\n**No filename!**")
             return
         else:
-            if filetype.mime_type:
-                mt = mimetypes.guess_type(str(filetype.file_name))[0]
-                if not mt.startswith("audio/"):
-                    await m.reply_text(text=f"Wrong File Type !")
-                    return
-            else:
-                await m.reply_text(text=f"Wrong File Type !")
+            mt = mimetypes.guess_type(filetype.file_name)[0]
+            mt = str(mt)
+            if mt and not mt.startswith("audio/"):
+                await m.reply_text(text=f"Wrong File Type !\n{mt}\n{filetype.file_name}")
                 return
     
     filename = filetype.file_name
     fsize = get_size(filetype.file_size)
 
     fname = await bot.ask(m.chat.id,f"Enter New Filename: or /skip (no change)\n\n/abort : **Cancel Operation!**\n\nCurrent Name: [{fsize}]\n`{filename}`", filters=filters.text)
-    if srt(fname.text) == "/abort":
+    if str(fname.text) == "/abort":
+        await bot.send_message(m.chat.id,f"Operation Canceled By User.")
         return
     title = await bot.ask(m.chat.id,f"Enter New Title: or /skip \n\n/abort : **Cancel Operation!**", filters=filters.text)
     if str(title.text) == "/abort":
+        await bot.send_message(m.chat.id,f"Operation Canceled By User.")
         return
     artist = await bot.ask(m.chat.id,f"Enter New Artist(s): or /skip \n\n/abort : **Cancel Operation!**", filters=filters.text)
     if str(artist.text) == "/abort":
+        await bot.send_message(m.chat.id,f"Operation Canceled By User.")
         return
     
     mes2 = await m.reply_text(
