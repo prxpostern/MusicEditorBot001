@@ -5,3 +5,4 @@ music_tag
 Pillow
 ffmpeg
 hachoir
+asyncio
