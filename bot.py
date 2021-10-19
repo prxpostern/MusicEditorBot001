@@ -52,80 +52,98 @@ async def tag(bot, m):
     filetype = m.audio or m.document
     
     if not filetype.mime_type.startswith("audio/"):
-        await m.reply_text(text=f"Wrong File Type !")
-        return
+        if not filetype.file_name:
+            await m.reply_text(text=f"Wrong File Type !")
+            return
+        else:
+            if filetype.mime_type:
+                mt = mimetypes.guess_type(str(filetype.file_name))[0]
+                if not mt.startswith("audio/"):
+                    await m.reply_text(text=f"Wrong File Type !")
+                    return
+            else:
+                await m.reply_text(text=f"Wrong File Type !")
+                return
     
     filename = filetype.file_name
     fsize = get_size(filetype.file_size)
 
-    fname = await bot.ask(m.chat.id,f"Enter New Filename: or /skip \n\n Current Name:\n`{filename}` [{fsize}]", filters=filters.text)
-    title = await bot.ask(m.chat.id,f"Enter New Title: or /skip", filters=filters.text)
-    artist = await bot.ask(m.chat.id,f"Enter New Artist(s): or /skip", filters=filters.text)
+    fname = await bot.ask(m.chat.id,f"Enter New Filename: or /skip (no change)\n\n/abort : **Cancel Operation!**\n\nCurrent Name: [{fsize}]\n`{filename}`", filters=filters.text)
+    if srt(fname.text) == "/abort":
+        return
+    title = await bot.ask(m.chat.id,f"Enter New Title: or /skip \n\n/abort : **Cancel Operation!**", filters=filters.text)
+    if str(title.text) == "/abort":
+        return
+    artist = await bot.ask(m.chat.id,f"Enter New Artist(s): or /skip \n\n/abort : **Cancel Operation!**", filters=filters.text)
+    if str(artist.text) == "/abort":
+        return
     
-    c_time = time.time()
     mes2 = await m.reply_text(
             text=f"**Initiating Download...**",
             quote=True
     )
-    file_loc = await bot.download_media(
-        m,
-        progress=progress_for_pyrogram,
-        progress_args=(
-            f"Downloading Audio [{fsize}] ...",
-            mes2,
-            c_time
-        )
-    )
-    
-    duration = 0
-    metadata = extractMetadata(createParser(file_loc))
-    if metadata and metadata.has("duration"):
-        duration = metadata.get("duration").seconds
-   
-    if fname.text == "/skip":
-        fname.text = filename
-    if title.text == "/skip":
-        if filetype.title:
-            title.text = filetype.title
-        else:
-            title.text = " "
-    if artist.text == "/skip":
-        if filetype.performer:
-            artist.text = filetype.performer
-        else:
-            artist.text = " "
-    if artist.text == ".":
-        artist.text = "حسن اللهیاری"    
-    
-    await mes2.edit("Initiating Upload ...")
-    
-    c_time = time.time()    
     try:
+        c_time = time.time()
+        file_loc = await bot.download_media(
+            m,
+            progress=progress_for_pyrogram,
+            progress_args=(
+                f"Downloading Audio [{fsize}] ...",
+                mes2,
+                c_time
+            )
+        )
+        duration = 0
+        metadata = extractMetadata(createParser(file_loc))
+        if metadata and metadata.has("duration"):
+            duration = metadata.get("duration").seconds
+        if fname.text == "/skip":
+            fname.text = filename
+        if title.text == "/skip":
+            if filetype.title:
+                title.text = filetype.title
+            else:
+                title.text = "untitled"
+        if artist.text == "/skip":
+            if filetype.performer:
+                artist.text = filetype.performer
+            else:
+                artist.text = "unknown artist"
+        if artist.text == ".":
+            artist.text = "حسن اللهیاری"
+    except Exception as e:
+        await mes2.edit(f"Download Failed\nError:\n{e}")
+        return
+
+    try:
+        await mes2.edit("Initiating Upload ...")
+        c_time = time.time()
         await bot.send_audio(
             chat_id=m.chat.id,
+            file_name=str(fname.text),
+            performer=str(artist.text),
+            title=str(title.text),
+            duration=duration,
+            audio=str(file_loc),
+            caption=f"**Filename:** `{fname.text}`\n**Title:** `{title.text}`\n**Artist(s):** `{artist.text}`\n**Size:** {fsize}",
+            reply_to_message_id=m.message_id,
             progress=progress_for_pyrogram,
             progress_args=(
                 f"Uploading Audio [{fsize}]",
                 mes2,
                 c_time
-            ),
-            file_name=fname.text,
-            performer=artist.text,
-            title=title.text,
-            duration=duration,
-            audio=file_loc,
-            caption=f"**Filename:** `{fname.text}`\n**Title:** `{title.text}`\n**Artist(s):** `{artist.text}`\n**Size:** {fsize}",
-            reply_to_message_id=m.message_id
+            )
          )
+        await fname.delete()
+        await title.delete()
+        await artist.delete()
+        await mes2.delete()
+        await bot.send_message(m.chat.id,f"Done! Start New Job!")
+        os.remove(file_loc)
     except Exception as e:
         await mes2.edit(f"Upload as Audio Failed\nError:\n{e}")
+        os.remove(file_loc)
         print(e)
+        return
 
-    os.remove(file_loc)
-    await fname.delete()
-    await title.delete()
-    await artist.delete()
-    await mes2.delete()
-    await bot.send_message(m.chat.id,f"Done! Start New Job!")
-        
 Bot.run()
