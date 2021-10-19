@@ -122,11 +122,11 @@ async def tag(bot, m):
         c_time = time.time()
         await bot.send_audio(
             chat_id=m.chat.id,
-            file_name=str(fname.text),
-            performer=str(artist.text),
-            title=str(title.text),
+            file_name=fname.text,
+            performer=artist.text,
+            title=title.text,
             duration=duration,
-            audio=str(file_loc),
+            audio=file_loc,
             caption=f"**Filename:** `{fname.text}`\n**Title:** `{title.text}`\n**Artist(s):** `{artist.text}`\n**Size:** {fsize}",
             reply_to_message_id=m.message_id,
             progress=progress_for_pyrogram,
