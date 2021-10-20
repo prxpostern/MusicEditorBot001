@@ -115,6 +115,10 @@ async def tag(bot, m):
             artist.text = "حسن اللهیاری"
     except Exception as e:
         await mes2.edit(f"Download Failed\nError:\n{e}")
+        await fname.delete()
+        await title.delete()
+        await artist.delete()
+        os.remove(file_loc)
         return
 
     try:
