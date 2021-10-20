@@ -66,6 +66,7 @@ async def tag(bot, m):
     
     filename = filetype.file_name
     fsize = get_size(filetype.file_size)
+    tempname = "Audio_CHATID" + str(m.chat.id) + "_DATE" + str(m.date) + ".mp3"
 
     fname = await bot.ask(m.chat.id,f"Enter New Filename: or /skip (no change)\n\n/abort : **Cancel Operation!**\n\nCurrent Name: [{fsize}]\n`{filename}`", filters=filters.text)
     if str(fname.text) == "/abort":
@@ -84,42 +85,36 @@ async def tag(bot, m):
             text=f"**Initiating Download...**",
             quote=True
     )
-    try:
-        c_time = time.time()
-        file_loc = await bot.download_media(
-            m,
-            progress=progress_for_pyrogram,
-            progress_args=(
-                f"Downloading Audio [{fsize}] ...",
-                mes2,
-                c_time
-            )
+    
+    c_time = time.time()
+    file_loc = await bot.download_media(
+        m,
+        file_name=tempname,
+        progress=progress_for_pyrogram,
+        progress_args=(
+            f"Downloading Audio [{fsize}] ...",
+            mes2,
+            c_time
         )
-        duration = 0
-        metadata = extractMetadata(createParser(file_loc))
-        if metadata and metadata.has("duration"):
-            duration = metadata.get("duration").seconds
-        if fname.text == "/skip":
-            fname.text = filename
-        if title.text == "/skip":
-            if filetype.title:
-                title.text = filetype.title
-            else:
-                title.text = "untitled"
-        if artist.text == "/skip":
-            if filetype.performer:
-                artist.text = filetype.performer
-            else:
-                artist.text = "unknown artist"
-        if artist.text == ".":
-            artist.text = "حسن اللهیاری"
-    except Exception as e:
-        await mes2.edit(f"Download Failed\nError:\n{e}")
-        await fname.delete()
-        await title.delete()
-        await artist.delete()
-        os.remove(file_loc)
-        return
+    )
+    duration = 0
+    metadata = extractMetadata(createParser(file_loc))
+    if metadata and metadata.has("duration"):
+        duration = metadata.get("duration").seconds
+    if fname.text == "/skip":
+        fname.text = filename
+    if title.text == "/skip":
+        if filetype.title:
+            title.text = filetype.title
+        else:
+            title.text = "untitled"
+    if artist.text == "/skip":
+        if filetype.performer:
+            artist.text = filetype.performer
+        else:
+            artist.text = "unknown artist"
+    if artist.text == ".":
+        artist.text = "حسن اللهیاری"
 
     try:
         await mes2.edit("Initiating Upload ...")
@@ -145,10 +140,19 @@ async def tag(bot, m):
         await artist.delete()
         await mes2.delete()
         await bot.send_message(m.chat.id,f"Done! Start New Job!")
-        os.remove(file_loc)
+        try:
+            os.remove(file_loc)
+        except:
+            pass
     except Exception as e:
+        await fname.delete()
+        await title.delete()
+        await artist.delete()
         await mes2.edit(f"Upload as Audio Failed\nError:\n{e}")
-        os.remove(file_loc)
+        try:
+            os.remove(file_loc)
+        except:
+            pass
         print(e)
         return
 
