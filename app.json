@@ -12,7 +12,12 @@
     "BOT_TOKEN": {
       "description": "Your bot token, as a string.",
       "value": ""
-}
+    },
+    "AUTH_USERS": {
+    "description": "only these user id's can use the bot. separate with space",
+    "value": "",
+    "required": false
+    }
   },
   "buildpacks": [
     {
