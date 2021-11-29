@@ -122,18 +122,27 @@ async def tag(bot, m):
     metadata = extractMetadata(createParser(file_loc))
     if metadata and metadata.has("duration"):
         duration = metadata.get("duration").seconds
+    
     if fname.text == "/skip":
         fname.text = filename
+    
     if title.text == "/skip":
-        if filetype.title:
-            title.text = filetype.title
+        if m.audio and m.audio.title:
+            title.text = m.audio.title
         else:
-            title.text = "untitled"
+            if metadata and metadata.has("title"):
+                title.text = metadata.get("title")
+            else:
+                title.text = "untitled"
+    
     if artist.text == "/skip":
-        if filetype.performer:
-            artist.text = filetype.performer
+        if m.audio and m.audio.performer:
+            artist.text = m.audio.performer
         else:
-            artist.text = "unknown artist"
+            if metadata and metadata.has("artist"):
+                artist.text = metadata.get("artist")
+            else:
+                artist.text = "unknown artist"
     if artist.text == ".":
         artist.text = "حسن اللهیاری"
 
