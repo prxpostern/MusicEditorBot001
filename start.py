@@ -64,20 +64,41 @@ async def tag(bot, m):
                 await m.reply_text(text=f"Wrong File Type !\n{mt}\n{filetype.file_name}")
                 return
     
-    filename = filetype.file_name
+    if filetype.file_name:
+        filename = filetype.file_name
+    else:
+        filename = "Audio_CHATID" + str(m.chat.id) + "_DATE" + str(m.date) + ".mp3"
+    
     fsize = get_size(filetype.file_size)
     tempname = "Audio_CHATID" + str(m.chat.id) + "_DATE" + str(m.date) + ".mp3"
 
-    fname = await bot.ask(m.chat.id,f"Enter New Filename: or /skip (no change)\n\n/abort : **Cancel Operation!**\n\nCurrent Name: [{fsize}]\n`{filename}`", filters=filters.text)
-    if str(fname.text) == "/abort":
+    try:
+        fname = await bot.ask(m.chat.id,f"Enter New Filename: or /skip (no change)\n\n/abort : **Cancel Operation!**\n\nCurrent Name: [{fsize}]\n`{filename}`", filters=filters.text)
+    except Exception as e:
+        await m.reply_text(text=f"**1- timeout exceeded**. re-send your audio to start again.\n\n{e}", quote=True)
+        print(e)
+        return
+    if fname.text == "/abort":
         await bot.send_message(m.chat.id,f"Operation Canceled By User.")
         return
-    title = await bot.ask(m.chat.id,f"Enter New Title: or /skip \n\n/abort : **Cancel Operation!**", filters=filters.text)
-    if str(title.text) == "/abort":
+    
+    try:
+        title = await bot.ask(m.chat.id,f"Enter New Title: or /skip \n\n/abort : **Cancel Operation!**", filters=filters.text)
+    except Exception as e:
+        await m.reply_text(text=f"**2- timeout exceeded**. re-send your audio to start again.\n\n{e}", quote=True)
+        print(e)
+        return    
+    if title.text == "/abort":
         await bot.send_message(m.chat.id,f"Operation Canceled By User.")
         return
-    artist = await bot.ask(m.chat.id,f"Enter New Artist(s): or /skip \n\n/abort : **Cancel Operation!**", filters=filters.text)
-    if str(artist.text) == "/abort":
+    
+    try:
+        artist = await bot.ask(m.chat.id,f"Enter New Artist(s): or /skip \n\n/abort : **Cancel Operation!**", filters=filters.text)
+    except Exception as e:
+        await m.reply_text(text=f"**3- timeout exceeded**. re-send your audio to start again.\n\n{e}", quote=True)
+        print(e)
+        return    
+    if artist.text == "/abort":
         await bot.send_message(m.chat.id,f"Operation Canceled By User.")
         return
     
