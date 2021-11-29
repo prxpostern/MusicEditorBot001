@@ -146,9 +146,9 @@ async def tag(bot, m):
     if artist.text == ".":
         artist.text = "حسن اللهیاری"
 
+    await mes2.edit("Initiating Upload ...")
+    c_time = time.time()
     try:
-        await mes2.edit("Initiating Upload ...")
-        c_time = time.time()
         await bot.send_audio(
             chat_id=m.chat.id,
             file_name=fname.text,
@@ -160,7 +160,7 @@ async def tag(bot, m):
             reply_to_message_id=m.message_id,
             progress=progress_for_pyrogram,
             progress_args=(
-                f"Uploading Audio [{fsize}]",
+                f"Uploading Audio:",
                 mes2,
                 c_time
             )
