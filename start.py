@@ -17,6 +17,8 @@ import mimetypes
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 API_ID = os.environ.get("API_ID")
 API_HASH = os.environ.get("API_HASH")
+# Array to store users who are authorized to use the bot
+AUTH_USERS = set(int(x) for x in os.environ.get("AUTH_USERS", "").split())
 
 Bot = Client(
     "Bot",
@@ -50,6 +52,10 @@ async def start(bot, update):
    
 @Bot.on_message(filters.private & (filters.audio | filters.document))
 async def tag(bot, m):
+    
+    if AUTH_USERS and m.from_user.id not in AUTH_USERS:
+        await m.reply_text(text=f"sorry ! you cant use this bot.\n\ndeploy your own bot:\n[Repository_Link](https://github.com/prxpostern/MusicEditorBot001)", quote=True, disable_web_page_preview=True)
+        return
 
     filetype = m.audio or m.document
     
